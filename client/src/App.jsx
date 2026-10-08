@@ -1,169 +1,164 @@
-import { useEffect, useState } from 'react'
-import { listSightings, createSighting, deleteSighting } from './api'
-import DemoNotice from './components/DemoNotice.jsx'
+import { useCallback, useEffect, useState } from 'react'
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
+import { createApi } from './lib/api.js'
+import { createAuth } from './lib/auth.js'
+import { supabase } from './lib/supabase.js'
+import { pickRandom } from './lib/pick.js'
+import LoginPage from './pages/LoginPage/LoginPage.jsx'
+import HomePage from './pages/HomePage/HomePage.jsx'
+import SuggestionPage from './pages/SuggestionPage/SuggestionPage.jsx'
+import ProofPage from './pages/ProofPage/ProofPage.jsx'
+import ProgressPage from './pages/ProgressPage/ProgressPage.jsx'
 
-// A deliberately small working app. Replace all of it with your own project.
-//
-// What is worth keeping is the SHAPE: four states rather than two, a loading
-// message that admits a free-tier server can be slow to wake, and errors that
-// say something rather than rendering an empty list.
+const defaultAuth = createAuth(supabase)
+const defaultApi = createApi({
+  baseUrl: import.meta.env.VITE_API_URL ?? '/api',
+  getToken: () => defaultAuth.getToken(),
+})
 
-const EMPTY_FORM = { place: '', description: '', spookiness: 3 }
+export default function App({ api = defaultApi, auth = defaultAuth }) {
+  const navigate = useNavigate()
+  const [session, setSession] = useState(undefined)
+  const [activities, setActivities] = useState([])
+  const [matches, setMatches] = useState([])
+  const [selectedTime, setSelectedTime] = useState(null)
+  const [selectedEnergy, setSelectedEnergy] = useState(null)
+  const [currentActivity, setCurrentActivity] = useState(null)
+  const [completedActivities, setCompletedActivities] = useState([])
+  const [progressStatus, setProgressStatus] = useState('loading')
 
-export default function App() {
-  const [status, setStatus] = useState('loading')   // loading | ready | error
-  const [rows, setRows] = useState([])
-  const [error, setError] = useState(null)
-  const [slow, setSlow] = useState(false)
-  const [form, setForm] = useState(EMPTY_FORM)
-  const [saving, setSaving] = useState(false)
+  useEffect(() => auth.onChange(setSession), [auth])
 
-  async function load() {
-    setStatus('loading')
-    setError(null)
-
-    // A free-tier API sleeps. If this is taking a while, say so rather than
-    // spinning silently, which looks broken. See page 6.
-    const timer = setTimeout(() => setSlow(true), 3000)
-
-    try {
-      setRows(await listSightings())
-      setStatus('ready')
-    } catch (caught) {
-      setError(caught)
-      setStatus('error')
-    } finally {
-      clearTimeout(timer)
-      setSlow(false)
-    }
-  }
-
+  const userId = session?.id
   useEffect(() => {
-    load()
-  }, [])
-
-  async function handleSubmit(event) {
-    event.preventDefault()
-    if (!form.place.trim()) return
-
-    setSaving(true)
-    try {
-      const created = await createSighting({
-        place: form.place.trim(),
-        description: form.description.trim(),
-        spookiness: Number(form.spookiness),
+    if (!userId) {
+      setActivities([])
+      setMatches([])
+      setSelectedTime(null)
+      setSelectedEnergy(null)
+      setCurrentActivity(null)
+      setCompletedActivities([])
+      setProgressStatus('loading')
+      return undefined
+    }
+    let cancelled = false
+    setProgressStatus('loading')
+    Promise.all([api.getActivities(), api.getCompletions()])
+      .then(([allActivities, completions]) => {
+        if (cancelled) return
+        setActivities(allActivities)
+        setCompletedActivities(completions)
+        setProgressStatus('ready')
       })
-      setRows([created, ...rows])
-      setForm(EMPTY_FORM)
-    } catch (caught) {
-      setError(caught)
-    } finally {
-      setSaving(false)
+      .catch(() => {
+        if (!cancelled) setProgressStatus('error')
+      })
+    return () => {
+      cancelled = true
     }
+  }, [userId, api])
+
+  const findActivity = useCallback(async () => {
+    const list = await api.getActivities({ time: selectedTime, energy: selectedEnergy })
+    setMatches(list)
+    if (list.length === 0) return false
+    setCurrentActivity(pickRandom(list))
+    return true
+  }, [api, selectedTime, selectedEnergy])
+
+  const showAnother = useCallback(() => {
+    setCurrentActivity((current) => pickRandom(matches, current?.id))
+  }, [matches])
+
+  const completeActivity = useCallback(
+    async (activity) => {
+      const completion = await api.addCompletion(activity.id)
+      setCompletedActivities((previous) => [completion, ...previous])
+    },
+    [api]
+  )
+
+  const finishFlow = useCallback(() => {
+    setCurrentActivity(null)
+    navigate('/')
+  }, [navigate])
+
+  const signOut = useCallback(() => {
+    auth.signOut().catch(() => {})
+  }, [auth])
+
+  if (session === undefined) {
+    return (
+      <main style={{ padding: 'var(--space-4) var(--space-2)' }}>
+        <p role="status">Loading...</p>
+      </main>
+    )
   }
 
-  async function handleDelete(id) {
-    const previous = rows
-    setRows(rows.filter((row) => row.id !== id))   // optimistic
-    try {
-      await deleteSighting(id)
-    } catch (caught) {
-      setRows(previous)                            // put it back on failure
-      setError(caught)
-    }
-  }
+  const requireSession = (element) => (session ? element : <Navigate to="/login" replace />)
+  const requireActivity = (render) =>
+    requireSession(currentActivity ? render(currentActivity) : <Navigate to="/" replace />)
 
   return (
-    <div className="page">
-      <header>
-        <h1>HAUnted Sightings</h1>
-        <p className="lede">
-          Replace this with your own project. This one is here so the template
-          has something that works.
-        </p>
-      </header>
-
-      <DemoNotice />
-
-      {error && (
-        <p className="error" role="alert">
-          {error.message} <button onClick={load}>Try again</button>
-        </p>
-      )}
-
-      <form onSubmit={handleSubmit} className="card">
-        <h2>Report a sighting</h2>
-
-        <label htmlFor="place">Place</label>
-        <input
-          id="place"
-          value={form.place}
-          onChange={(event) => setForm({ ...form, place: event.target.value })}
-          maxLength={120}
-          required
-        />
-
-        <label htmlFor="description">What happened</label>
-        <textarea
-          id="description"
-          value={form.description}
-          onChange={(event) => setForm({ ...form, description: event.target.value })}
-          maxLength={2000}
-          rows={3}
-        />
-
-        <label htmlFor="spookiness">Spookiness, 1 to 5</label>
-        <input
-          id="spookiness"
-          type="number"
-          min="1"
-          max="5"
-          value={form.spookiness}
-          onChange={(event) => setForm({ ...form, spookiness: event.target.value })}
-          required
-        />
-
-        <button type="submit" disabled={saving}>
-          {saving ? 'Saving...' : 'Add sighting'}
-        </button>
-      </form>
-
-      {/* Four states. Empty and error are different things and must not look
-          the same: an empty list means "nothing here yet", an error means
-          "we could not find out". */}
-      {status === 'loading' && (
-        <p className="muted">
-          Loading{slow ? '. The server may be waking up, which can take up to a minute.' : '...'}
-        </p>
-      )}
-
-      {status === 'ready' && rows.length === 0 && (
-        <p className="muted">No sightings reported yet. Add the first one above.</p>
-      )}
-
-      {status === 'ready' && rows.length > 0 && (
-        <ul className="list">
-          {rows.map((row) => (
-            <li key={row.id} className="card">
-              <div className="row-head">
-                <h3>{row.place}</h3>
-                <span className="spooky" aria-label={`Spookiness ${row.spookiness} of 5`}>
-                  {'*'.repeat(row.spookiness)}
-                </span>
-              </div>
-              {row.description
-                ? <p>{row.description}</p>
-                : <p className="muted">No description given.</p>}
-              <footer>
-                <time dateTime={row.reported_at}>
-                  {new Date(row.reported_at).toLocaleString()}
-                </time>
-                <button onClick={() => handleDelete(row.id)}>Delete</button>
-              </footer>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <Routes>
+      <Route
+        path="/login"
+        element={
+          session ? (
+            <Navigate to="/" replace />
+          ) : (
+            <LoginPage
+              onSignIn={auth.signIn}
+              onSignUp={auth.signUp}
+              onGoogle={auth.signInWithGoogle}
+            />
+          )
+        }
+      />
+      <Route
+        path="/"
+        element={requireSession(
+          <HomePage
+            displayName={session?.displayName}
+            selectedTime={selectedTime}
+            selectedEnergy={selectedEnergy}
+            onTimeChange={setSelectedTime}
+            onEnergyChange={setSelectedEnergy}
+            onFind={findActivity}
+            onSignOut={signOut}
+          />
+        )}
+      />
+      <Route
+        path="/suggestion"
+        element={requireActivity((activity) => (
+          <SuggestionPage activity={activity} onShowAnother={showAnother} onSignOut={signOut} />
+        ))}
+      />
+      <Route
+        path="/proof"
+        element={requireActivity((activity) => (
+          <ProofPage
+            key={activity.id}
+            activity={activity}
+            onComplete={completeActivity}
+            onDone={finishFlow}
+            onSignOut={signOut}
+          />
+        ))}
+      />
+      <Route
+        path="/progress"
+        element={requireSession(
+          <ProgressPage
+            status={progressStatus}
+            completedActivities={completedActivities}
+            activities={activities}
+            onSignOut={signOut}
+          />
+        )}
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }

@@ -1,0 +1,22 @@
+.heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-heading);
+  font-weight: 700;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.heading[data-display='true'] {
+  color: var(--color-display);
+  font-size: var(--font-size-display);
+  line-height: 1.2;
+}
+
+.heading[data-centered='true'] {
+  text-align: center;
+}
+
+.heading[data-accent='true'] {
+  color: var(--color-accent);
+}

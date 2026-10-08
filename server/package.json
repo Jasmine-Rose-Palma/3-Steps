@@ -1,21 +1,22 @@
 {
-  "name": "final-project-server",
-  "private": true,
+  "name": "three-steps-backend",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
+  "description": "API for 3 Steps: What to Do When You Have Nothing to Do?",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --env-file=.env --watch server.js",
-    "db:schema": "node --env-file=.env db/run.js db/schema.sql",
-    "db:seed": "node --env-file=.env db/run.js db/seed.sql",
-    "db:reset": "npm run db:schema && npm run db:seed"
-  },
-  "engines": {
-    "node": ">=20"
+    "test": "vitest run",
+    "start": "node --env-file=.env src/index.js",
+    "db:setup": "node --env-file=.env src/dbSetupCli.js"
   },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.21.2",
-    "pg": "^8.13.1"
+    "express": "^5.2.1",
+    "jose": "^6.2.12",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "pg-mem": "^3.0.14",
+    "supertest": "^7.3.1",
+    "vitest": "^5.0.3"
   }
 }

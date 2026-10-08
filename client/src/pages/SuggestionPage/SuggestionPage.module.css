@@ -1,0 +1,14 @@
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+@media (min-width: 600px) {
+  .actions {
+    flex-direction: row;
+    gap: 22px;
+    margin-top: 17px;
+  }
+}

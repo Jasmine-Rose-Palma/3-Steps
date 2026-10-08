@@ -1,0 +1,70 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--font-size-body);
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  border: var(--border-width) solid var(--color-text);
+  border-radius: var(--radius);
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+  font-size: var(--font-size-body);
+  line-height: 1.5;
+}
+
+textarea.input {
+  resize: vertical;
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--font-size-small);
+}
+
+.field[data-size='large'] {
+  gap: 13px;
+}
+
+.field[data-size='large'] .label {
+  font-size: var(--font-size-heading);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.field[data-size='large'] .input {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-large);
+}
+
+.field[data-size='large'] textarea.input {
+  min-height: 143px;
+}
+
+.field[data-size='medium'] {
+  gap: 0;
+}
+
+.field[data-size='medium'] .label {
+  font-size: var(--font-size-label);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.field[data-size='medium'] .input {
+  padding: 13px var(--space-2);
+  border-width: 1px;
+  background: #ffffff;
+}
+
+.field[data-size='medium'] .hint {
+  margin-top: 4px;
+}

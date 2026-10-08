@@ -1,19 +1,30 @@
 {
-  "name": "final-project-client",
-  "private": true,
+  "name": "three-steps-frontend",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
+  "description": "React front end for 3 Steps: What to Do When You Have Nothing to Do?",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node -e \"require('fs').copyFileSync('dist/index.html','dist/404.html')\"",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@fontsource/poppins": "^5.3.0",
+    "@fontsource/rozha-one": "^5.3.0",
+    "@supabase/supabase-js": "^2.117.2",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
-    "vite": "^6.0.7"
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "jsdom": "^30.1.2",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
   }
 }

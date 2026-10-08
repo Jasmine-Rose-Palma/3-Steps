@@ -1,0 +1,22 @@
+.tag {
+  display: inline-block;
+  padding: 2px var(--space-1);
+  border-radius: 4px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.tag[data-size='large'] {
+  min-width: 122px;
+  padding: 6px var(--space-2);
+  border: 1px solid var(--color-text);
+  border-radius: var(--radius);
+  background: #ffffff;
+  font-size: var(--font-size-body);
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+}

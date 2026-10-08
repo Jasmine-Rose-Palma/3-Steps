@@ -1,0 +1,15 @@
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-2);
+}
+
+.section {
+  margin-top: var(--space-4);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
