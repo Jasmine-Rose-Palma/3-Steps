@@ -6,7 +6,7 @@
   "description": "React front end for 3 Steps: What to Do When You Have Nothing to Do?",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node -e \"require('fs').copyFileSync('dist/index.html','dist/404.html')\"",
     "preview": "vite preview",
     "test": "vitest run"
   },

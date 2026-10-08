@@ -6,11 +6,14 @@
   "description": "API for 3 Steps: What to Do When You Have Nothing to Do?",
   "scripts": {
     "test": "vitest run",
-    "start": "node --env-file=.env src/index.js",
+    "start": "node src/index.js",
+    "dev": "node --env-file=.env --watch src/index.js",
     "db:setup": "node --env-file=.env src/dbSetupCli.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^5.2.1",
+    "helmet": "^8.1.0",
     "jose": "^6.2.12",
     "pg": "^8.23.1"
   },
@@ -18,5 +21,8 @@
     "pg-mem": "^3.0.14",
     "supertest": "^7.3.1",
     "vitest": "^5.0.3"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

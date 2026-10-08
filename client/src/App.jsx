@@ -12,7 +12,7 @@ import ProgressPage from './pages/ProgressPage/ProgressPage.jsx'
 
 const defaultAuth = createAuth(supabase)
 const defaultApi = createApi({
-  baseUrl: import.meta.env.VITE_API_URL ?? '/api',
+  baseUrl: import.meta.env.VITE_API_URL || '/api',
   getToken: () => defaultAuth.getToken(),
 })
 

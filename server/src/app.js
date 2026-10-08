@@ -1,4 +1,6 @@
 import express from 'express'
+import cors from 'cors'
+import helmet from 'helmet'
 import { getAll, getById } from './activitiesRepo.js'
 import { completionsRouter } from './completionsRoutes.js'
 import { defaultVerifyToken } from './auth.js'
@@ -7,7 +9,14 @@ const TIMES = ['under5', '5to10']
 const ENERGIES = ['low', 'someEffort']
 
 export function createApp(pool, { verifyToken = defaultVerifyToken } = {}) {
+  const allowedOrigins = (process.env.CORS_ORIGINS ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+
   const app = express()
+  app.use(helmet())
+  app.use(cors({ origin: allowedOrigins }))
   app.use(express.json())
 
   app.get('/health', (req, res) => {

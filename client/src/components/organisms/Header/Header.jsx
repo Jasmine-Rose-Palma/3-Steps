@@ -13,7 +13,7 @@ export default function Header({ activeLink, onSignOut }) {
           aria-label="3 Steps home"
           aria-current={activeLink === 'home' ? 'page' : undefined}
         >
-          <img src="/logo.png" alt="" className={styles.logoImage} />
+          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" className={styles.logoImage} />
         </Link>
         <div className={styles.actions}>
           <nav aria-label="Main">

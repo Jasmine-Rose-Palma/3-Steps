@@ -50,7 +50,7 @@ export default function LoginPage({ onSignIn, onSignUp, onGoogle }) {
 
   return (
     <main className={styles.page}>
-      <img src="/logo.png" alt="" className={styles.logo} />
+      <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" className={styles.logo} />
       <div className={styles.intro}>
         <Heading level={1} centered accent>
           Welcome to 3 Steps!
