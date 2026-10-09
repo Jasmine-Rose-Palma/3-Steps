@@ -8,7 +8,7 @@
 
 > The API runs on a free plan, so it goes to sleep when nobody uses it. The first request after a quiet period can take about 50 seconds. If the site seems stuck on loading, give it a minute.
 
-![The 3 Steps login screen](docs/assets/screenshot.png)
+![The 3 Steps login screen](docs/login_screenshot.png)
 
 ## What it does
 
@@ -19,6 +19,8 @@
 - A Progress screen lists everything you have finished.
 
 The proof is only there so that finishing an activity is not on the honor system. The typed line and the photo are checked on screen and are not stored. Only the activity and the date are saved.
+
+Signing in keeps your email address with Supabase, and your name too if you use Google. My own database saves only your account’s id, the activity and the date.
 
 ## Built with
 

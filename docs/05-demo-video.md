@@ -1,33 +1,32 @@
 # Demo video
 
-Three to five minutes, screen recorded, your own voice. Nobody watches ten.
+**Link:** https://drive.google.com/file/d/1j7ORnrtF1igjwod5-1fb2tZQvgfH5KR1/view?usp=sharing 
 
-**Link:** (paste it here, and in the main README)
+## My plan
 
-## The structure that always works
+**1. Thirty seconds: what it is and who it is for.** I start on the live site's login screen, not on a slide. I say that 3 Steps is for someone like me, who reaches for their phone to scroll when they have a few free minutes and no energy for anything big. It gives them one small activity that fits their time and energy, and asks for proof that they did it.
 
-1. **Thirty seconds.** What it is and who it is for. Show the app, not a slide.
-2. **Two to three minutes.** The main flow, end to end, on the **deployed** site,
-   with data you prepared in advance. Not an empty database, and not a form you
-   fill in slowly while talking.
-3. **Thirty seconds.** One thing you are proud of technically. Open one file and
-   explain a decision. This is where you show it is yours.
-4. **Thirty seconds.** One honest thing you would do differently. It is the
-   sentence that makes everything else credible.
+**2. Two to three minutes: the main flow, on the deployed site.** I sign in with a demo account that already has a few finished activities. Then:
 
-## Before you record
+1. On Home I pick **under 5 minutes** and **low-effort**. The Find an activity button stays locked until both are chosen.
+2. I get one suggestion, tap **Show another** once to show it picks a different one, then tap **Do this**.
+3. On the proof screen I give the proof (a typed line for a text activity), and Mark Complete only unlocks once there is an answer.
+4. The app returns me to Home. I open **Progress** and show the new activity at the top of the list with the count going up.
+5. I click sign out and show that it brings me back to the Login screen
 
-- [ ] Open the site five minutes early so a free-tier API is awake
+**3. Thirty seconds: the thing I am proud of.** I open `server/src/auth.js` and then `server/src/completionsRepo.js`. The point I want to make is that Supabase only answers who the user is. My own API checks the token, takes the user id from it, and the SQL query itself only reads that user's rows, so nobody can see anyone else's progress by changing a request. I wrote the route protection and the queries myself. The part that checks the token's signature with the `jose` library was written by Claude, and I say so in the video.
+
+**4. Thirty seconds: what I would do differently.** The photo proof is only previewed on the screen and the typed line is not kept, so Progress shows that I did something but not what I did. I would like to store the proof next time. I would also tell the user when the free-plan API is waking up, and limit how often one person can call it.
+
+## Before I record
+
+- [ ] Open the site five minutes early so the free-tier API on Render is awake
 - [ ] Record the **deployed** URL, not `localhost`
-- [ ] Close your other tabs. Check for personal messages, other students' names,
-      and any `.env` file open in an editor
-- [ ] Seed realistic data
-- [ ] Do a full practice run. If something breaks, stop and start again rather
-      than narrating the bug
+- [ ] Use a demo account with an invented email. Home says "Hi, " followed by a name taken from the email or the Google profile, so a Google account would show my real name on screen
+- [ ] Finish three or four activities on the demo account first, so Progress is not empty
+- [ ] Close my other tabs. Check for personal messages, other students' names, and any `.env` file open in an editor
+- [ ] Do a full practice run. If something breaks, I stop and start again.
 
-## Have a fallback
+## Fallback
 
-In order of preference: a demo-mode build of the client, a recording of the
-working app, screenshots. A demo that fails with no fallback is a bad five
-minutes. A demo that fails where you say "here is the recording, and here is what
-went wrong" is a good one.
+If the live site is down or the API is slow on the day, I use a recording of the working app, and if that fails, screenshots of the five screens. If something fails during the recording, I say that it is the recording, and what went wrong, rather than hiding it.
